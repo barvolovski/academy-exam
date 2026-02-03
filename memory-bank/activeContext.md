@@ -34,9 +34,8 @@ None
 
 ## Next Steps
 1. Add authentication for admin panel
-2. Implement CSV export for results
-3. Add bulk candidate import
-4. Production deployment configuration
+2. Add bulk candidate import
+3. Production deployment configuration
 
 ## Session Notes
 - User wants simple, one-time setup
@@ -52,3 +51,4 @@ All core features tested and working:
 - Code execution (mock mode)
 - Proctor event tracking
 - LeetCode problem import catalog
+- CSV export for exam results (with BOM for Excel compatibility)

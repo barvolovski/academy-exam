@@ -7,7 +7,9 @@ export interface ExamResultRow {
   totalScore: number | null;
   maxScore: number;
   status: string;
+  startedAt: Date;
   submittedAt: Date | null;
+  timeTakenMinutes: number | null;
   proctorFlags: number;
   examTitle: string;
   examId: string;
@@ -23,6 +25,7 @@ export async function getExamResults(examId?: string): Promise<ExamResultRow[]> 
       candidateEmail: true,
       totalScore: true,
       status: true,
+      startedAt: true,
       submittedAt: true,
       examId: true,
       exam: {
@@ -43,18 +46,28 @@ export async function getExamResults(examId?: string): Promise<ExamResultRow[]> 
     },
   });
 
-  return sessions.map((session) => ({
-    id: session.id,
-    candidateName: session.candidateName,
-    candidateEmail: session.candidateEmail,
-    totalScore: session.totalScore,
-    maxScore: session.exam.examProblems.reduce((sum, p) => sum + p.points, 0),
-    status: session.status,
-    submittedAt: session.submittedAt,
-    proctorFlags: session._count.proctorEvents,
-    examTitle: session.exam.title,
-    examId: session.examId,
-  }));
+  return sessions.map((session) => {
+    const timeTakenMinutes = session.submittedAt
+      ? Math.round(
+          (session.submittedAt.getTime() - session.startedAt.getTime()) / 60000
+        )
+      : null;
+
+    return {
+      id: session.id,
+      candidateName: session.candidateName,
+      candidateEmail: session.candidateEmail,
+      totalScore: session.totalScore,
+      maxScore: session.exam.examProblems.reduce((sum, p) => sum + p.points, 0),
+      status: session.status,
+      startedAt: session.startedAt,
+      submittedAt: session.submittedAt,
+      timeTakenMinutes,
+      proctorFlags: session._count.proctorEvents,
+      examTitle: session.exam.title,
+      examId: session.examId,
+    };
+  });
 }
 
 export interface SessionDetail {
@@ -205,6 +218,9 @@ export async function getSessionDetail(
   };
 }
 
+// UTF-8 BOM for Excel compatibility
+const UTF8_BOM = "\uFEFF";
+
 export async function exportResultsCSV(examId: string): Promise<string> {
   const results = await getExamResults(examId);
 
@@ -215,8 +231,10 @@ export async function exportResultsCSV(examId: string): Promise<string> {
     "Max Score",
     "Percentage",
     "Status",
+    "Time Taken (min)",
+    "Flags",
+    "Started At",
     "Submitted At",
-    "Proctor Flags",
   ];
 
   const rows = results.map((r) => [
@@ -228,11 +246,19 @@ export async function exportResultsCSV(examId: string): Promise<string> {
       ? ((r.totalScore / r.maxScore) * 100).toFixed(1) + "%"
       : "",
     r.status,
-    r.submittedAt?.toISOString() ?? "",
+    r.timeTakenMinutes?.toString() ?? "",
     r.proctorFlags.toString(),
+    formatDateTime(r.startedAt),
+    r.submittedAt ? formatDateTime(r.submittedAt) : "",
   ]);
 
-  return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+  return (
+    UTF8_BOM + [headers.join(","), ...rows.map((row) => row.join(","))].join("\n")
+  );
+}
+
+function formatDateTime(date: Date): string {
+  return date.toISOString().replace("T", " ").slice(0, 19);
 }
 
 function escapeCSV(value: string): string {

@@ -45,6 +45,7 @@
 | 2026-02-03 | Added admin results dashboard | View exam results, candidate details, and export CSV |
 | 2026-02-03 | Added exam create/edit pages | Admin can configure exams, select problems, manage access codes |
 | 2026-02-03 | Full system testing complete | All features verified working via browser automation |
+| 2026-02-03 | Enhanced CSV export | Added time taken, started at columns, BOM for Excel |
 
 ## Testing Summary (2026-02-03)
 
@@ -61,6 +62,7 @@
 | Code Editor | ✅ Pass | Monaco with Python/Java/C++/Go |
 | Code Execution | ✅ Pass | Run code shows test results (mock mode) |
 | Results Dashboard | ✅ Pass | Sortable table, exam filter, detail view |
+| CSV Export | ✅ Pass | Export button, Excel-compatible with BOM |
 | Proctor Events | ✅ Pass | Tab switch, copy/paste tracking with timestamps |
 | AI Settings | ✅ Pass | Claude & GPT-4 provider configuration |
 

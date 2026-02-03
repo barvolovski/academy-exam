@@ -21,9 +21,10 @@ export function ExportButton({ examId }: ExportButtonProps) {
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
+      const date = new Date().toISOString().slice(0, 10);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `exam-results-${examId}.csv`;
+      a.download = `exam-results-${examId}-${date}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);

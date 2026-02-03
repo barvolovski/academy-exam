@@ -14,12 +14,14 @@ export async function GET(request: NextRequest) {
 
   try {
     const csv = await exportResultsCSV(examId);
+    const date = new Date().toISOString().slice(0, 10);
+    const filename = `exam-results-${examId}-${date}.csv`;
 
     return new NextResponse(csv, {
       status: 200,
       headers: {
-        "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename="exam-results-${examId}.csv"`,
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });
   } catch (error) {
