@@ -24,6 +24,8 @@
 | ACAD-007 | Exam Interface Components | 🟢 Done | Timer, sidebar, test results |
 | ACAD-008 | Main Exam Page | 🟢 Done | src/app/(exam)/exam/[sessionId]/page.tsx |
 | ACAD-009 | Admin Results Dashboard | 🟢 Done | Results list, session detail, CSV export |
+| ACAD-010 | Problem CRUD | 🟢 Done | Create/edit/delete problems with test cases |
+| ACAD-011 | Exam Create/Edit Pages | 🟢 Done | Exam form with problem selector, access codes |
 
 ## Upcoming Milestones
 - [x] Phase 1: Core Infrastructure (Next.js, DB, Judge0)
@@ -40,3 +42,4 @@ None yet.
 |------|--------|--------|
 | 2025-02-03 | Initial architecture defined | Project kickoff |
 | 2026-02-03 | Added admin results dashboard | View exam results, candidate details, and export CSV |
+| 2026-02-03 | Added exam create/edit pages | Admin can configure exams, select problems, manage access codes |
