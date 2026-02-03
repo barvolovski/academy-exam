@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ProblemForm } from "../_components/problem-form";
+import { getEnabledAIProviders } from "@/lib/ai-providers/actions";
 import type { StarterCode, TestCase } from "@/lib/problems/schemas";
 
 interface EditProblemPageProps {
@@ -10,9 +11,26 @@ interface EditProblemPageProps {
 export default async function EditProblemPage({ params }: EditProblemPageProps) {
   const { id } = await params;
 
-  const problem = await db.problem.findUnique({
-    where: { id },
-  });
+  const [problem, aiProviders] = await Promise.all([
+    db.problem.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        difficulty: true,
+        starterCode: true,
+        testCases: true,
+        timeLimitMs: true,
+        memoryLimitKb: true,
+        aiEnabled: true,
+        aiProviderId: true,
+        aiSystemPrompt: true,
+        aiMaxMessages: true,
+      },
+    }),
+    getEnabledAIProviders(),
+  ]);
 
   if (!problem) {
     notFound();
@@ -27,6 +45,10 @@ export default async function EditProblemPage({ params }: EditProblemPageProps) 
     testCases: problem.testCases as TestCase[],
     timeLimitMs: problem.timeLimitMs,
     memoryLimitKb: problem.memoryLimitKb,
+    aiEnabled: problem.aiEnabled,
+    aiProviderId: problem.aiProviderId,
+    aiSystemPrompt: problem.aiSystemPrompt,
+    aiMaxMessages: problem.aiMaxMessages,
   };
 
   return (
@@ -38,7 +60,7 @@ export default async function EditProblemPage({ params }: EditProblemPageProps) 
         </p>
       </div>
 
-      <ProblemForm initialData={initialData} />
+      <ProblemForm initialData={initialData} aiProviders={aiProviders} />
     </div>
   );
 }

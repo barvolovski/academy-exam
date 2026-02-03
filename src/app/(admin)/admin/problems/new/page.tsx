@@ -1,6 +1,9 @@
 import { ProblemForm } from "../_components/problem-form";
+import { getEnabledAIProviders } from "@/lib/ai-providers/actions";
 
-export default function NewProblemPage() {
+export default async function NewProblemPage() {
+  const aiProviders = await getEnabledAIProviders();
+
   return (
     <div className="space-y-6">
       <div>
@@ -10,7 +13,7 @@ export default function NewProblemPage() {
         </p>
       </div>
 
-      <ProblemForm />
+      <ProblemForm aiProviders={aiProviders} />
     </div>
   );
 }
