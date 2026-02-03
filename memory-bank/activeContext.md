@@ -28,14 +28,24 @@
 | 2025-02-03 | Use Judge0 CE self-hosted | Control, no API limits, data ownership |
 | 2025-02-03 | Use memory-bank pattern | Maintain context across sessions |
 | 2026-02-03 | Enable JUDGE0_MOCK_MODE on macOS | Judge0 requires Linux cgroups unavailable in Docker Desktop |
+| 2026-02-03 | Simple production deployment | Single docker-compose, deploy.sh script, no nginx complexity |
 
 ## Current Blockers
 None
 
 ## Next Steps
-1. Add authentication for admin panel
-2. Add bulk candidate import
-3. Production deployment configuration
+1. Add authentication for admin panel (in progress - parallel task)
+2. Implement CSV export for results (in progress - parallel task)
+3. Add bulk candidate import (in progress - parallel task)
+4. ~~Production deployment configuration~~ DONE
+
+## Deployment Configuration (2026-02-03)
+Files created:
+- `Dockerfile` - Multi-stage build for Next.js standalone
+- `docker-compose.prod.yml` - Production services with Judge0 workers
+- `deploy.sh` - Simple deployment script (start/stop/logs/status)
+- `DEPLOY.md` - Quick deployment guide
+- `src/app/api/health/route.ts` - Health check endpoint
 
 ## Session Notes
 - User wants simple, one-time setup
