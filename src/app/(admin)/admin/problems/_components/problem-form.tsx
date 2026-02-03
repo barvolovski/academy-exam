@@ -48,10 +48,15 @@ interface ProblemFormProps {
     testCases: TestCase[];
     timeLimitMs: number;
     memoryLimitKb: number;
+    aiEnabled: boolean;
+    aiProviderId: string | null;
+    aiSystemPrompt: string | null;
+    aiMaxMessages: number | null;
   };
+  aiProviders: Array<{ id: string; name: string; label: string }>;
 }
 
-export function ProblemForm({ initialData }: ProblemFormProps) {
+export function ProblemForm({ initialData, aiProviders }: ProblemFormProps) {
   const isEditing = !!initialData;
 
   const boundUpdateProblem = initialData
@@ -73,6 +78,13 @@ export function ProblemForm({ initialData }: ProblemFormProps) {
 
   const [difficulty, setDifficulty] = useState<string>(
     initialData?.difficulty ?? ""
+  );
+
+  const [aiEnabled, setAiEnabled] = useState(initialData?.aiEnabled ?? false);
+  const [aiProviderId, setAiProviderId] = useState(initialData?.aiProviderId ?? "");
+  const [aiSystemPrompt, setAiSystemPrompt] = useState(initialData?.aiSystemPrompt ?? "");
+  const [aiMaxMessages, setAiMaxMessages] = useState<string>(
+    initialData?.aiMaxMessages?.toString() ?? ""
   );
 
   const addTestCase = () => {
@@ -320,6 +332,80 @@ export function ProblemForm({ initialData }: ProblemFormProps) {
         </div>
 
         <input type="hidden" name="testCases" value={JSON.stringify(testCases)} />
+      </div>
+
+      {/* AI Assistance */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">AI Assistance</h2>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="aiEnabled"
+            name="aiEnabled"
+            checked={aiEnabled}
+            onChange={(e) => setAiEnabled(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+          <Label htmlFor="aiEnabled" className="font-normal">
+            Enable AI chat assistance for this problem
+          </Label>
+        </div>
+
+        {aiEnabled && (
+          <Card className="p-4 space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="aiProviderId">AI Provider</Label>
+                <Select
+                  name="aiProviderId"
+                  value={aiProviderId}
+                  onValueChange={setAiProviderId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {aiProviders.map((provider) => (
+                      <SelectItem key={provider.id} value={provider.id}>
+                        {provider.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="aiMaxMessages">Max Messages (optional)</Label>
+                <Input
+                  id="aiMaxMessages"
+                  name="aiMaxMessages"
+                  type="number"
+                  value={aiMaxMessages}
+                  onChange={(e) => setAiMaxMessages(e.target.value)}
+                  placeholder="Unlimited"
+                  min={1}
+                  max={100}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="aiSystemPrompt">System Prompt (optional)</Label>
+              <Textarea
+                id="aiSystemPrompt"
+                name="aiSystemPrompt"
+                value={aiSystemPrompt}
+                onChange={(e) => setAiSystemPrompt(e.target.value)}
+                placeholder="You are a helpful coding tutor..."
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">
+                Custom instructions for the AI. Leave blank for default behavior.
+              </p>
+            </div>
+          </Card>
+        )}
       </div>
 
       {/* Submit */}
