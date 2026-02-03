@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Coding problems with test cases
+model Problem {
+  id            String   @id @default(uuid())
+  title         String   @db.VarChar(255)
+  description   String   @db.Text
+  difficulty    Difficulty
+  starterCode   Json     @map("starter_code")  // {python: "", java: "", cpp: "", go: ""}
+  testCases     Json     @map("test_cases")    // [{input, expected, hidden}]
+  timeLimitMs   Int      @default(2000) @map("time_limit_ms")
+  memoryLimitKb Int      @default(262144) @map("memory_limit_kb")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  examProblems  ExamProblem[]
+  submissions   Submission[]
+
+  @@map("problems")
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+// Exam configuration
+model Exam {
+  id              String   @id @default(uuid())
+  title           String   @db.VarChar(255)
+  accessCode      String   @unique @db.VarChar(20) @map("access_code")
+  durationMinutes Int      @map("duration_minutes")
+  startsAt        DateTime @map("starts_at")
+  endsAt          DateTime @map("ends_at")
+  isActive        Boolean  @default(false) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  examProblems    ExamProblem[]
+  sessions        ExamSession[]
+
+  @@map("exams")
+}
+
+// Junction table for exam-problem relationship
+model ExamProblem {
+  id        String  @id @default(uuid())
+  examId    String  @map("exam_id")
+  problemId String  @map("problem_id")
+  order     Int
+  points    Int     @default(10)
+
+  exam      Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, problemId])
+  @@map("exam_problems")
+}
+
+// Candidate's exam session
+model ExamSession {
+  id             String        @id @default(uuid())
+  examId         String        @map("exam_id")
+  candidateName  String        @db.VarChar(255) @map("candidate_name")
+  candidateEmail String        @db.VarChar(255) @map("candidate_email")
+  startedAt      DateTime      @default(now()) @map("started_at")
+  submittedAt    DateTime?     @map("submitted_at")
+  totalScore     Int?          @map("total_score")
+  status         SessionStatus @default(in_progress)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  exam           Exam          @relation(fields: [examId], references: [id])
+  submissions    Submission[]
+  proctorEvents  ProctorEvent[]
+
+  @@unique([examId, candidateEmail])
+  @@map("exam_sessions")
+}
+
+enum SessionStatus {
+  in_progress
+  submitted
+  timed_out
+}
+
+// Code submissions
+model Submission {
+  id              String           @id @default(uuid())
+  sessionId       String           @map("session_id")
+  problemId       String           @map("problem_id")
+  language        String           @db.VarChar(20)
+  code            String           @db.Text
+  status          SubmissionStatus @default(pending)
+  testResults     Json?            @map("test_results")  // [{passed, output, timeMs}]
+  executionTimeMs Int?             @map("execution_time_ms")
+  memoryUsedKb    Int?             @map("memory_used_kb")
+  isFinal         Boolean          @default(false) @map("is_final")
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  session         ExamSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  problem         Problem          @relation(fields: [problemId], references: [id])
+
+  @@index([sessionId, problemId, isFinal])
+  @@map("submissions")
+}
+
+enum SubmissionStatus {
+  pending
+  running
+  passed
+  failed
+  error
+}
+
+// Proctoring events
+model ProctorEvent {
+  id        String    @id @default(uuid())
+  sessionId String    @map("session_id")
+  eventType EventType @map("event_type")
+  details   Json?
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  session   ExamSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+  @@map("proctor_events")
+}
+
+enum EventType {
+  tab_switch
+  copy
+  paste
+  focus_lost
+}
