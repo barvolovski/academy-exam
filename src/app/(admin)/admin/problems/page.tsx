@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { DeleteProblemButton } from "./_components/delete-problem-button";
 
 export default async function ProblemsPage() {
   const problems = await db.problem.findMany({
@@ -49,13 +50,17 @@ export default async function ProblemsPage() {
                   <td className="px-4 py-3 text-muted-foreground">
                     {problem.createdAt.toLocaleDateString()}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right space-x-2">
                     <Link
                       href={`/admin/problems/${problem.id}`}
                       className="text-primary hover:underline"
                     >
                       Edit
                     </Link>
+                    <DeleteProblemButton
+                      problemId={problem.id}
+                      problemTitle={problem.title}
+                    />
                   </td>
                 </tr>
               ))}
