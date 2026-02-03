@@ -48,10 +48,7 @@ if [ -d "academy" ]; then
   cd academy
   git pull
 else
-  # Replace with your actual repo URL
-  echo -e "${YELLOW}Enter your GitHub repo URL (e.g., https://github.com/user/academy):${NC}"
-  read REPO_URL
-  git clone "$REPO_URL" academy
+  git clone https://github.com/barvolovski/academy-exam.git academy
   cd academy
 fi
 
