@@ -32,10 +32,11 @@
 - [x] Phase 2: Admin Dashboard
 - [x] Phase 3: Candidate Exam Interface (Basic)
 - [x] Phase 4: Proctoring & Results (Admin view complete)
-- [ ] Phase 5: Testing & Deployment
+- [x] Phase 5: Testing & Deployment
 
 ## Known Issues
-None yet.
+1. **Judge0 on macOS**: Requires `JUDGE0_MOCK_MODE=true` in .env - Judge0 needs Linux cgroups unavailable in Docker Desktop
+2. **Monaco Editor interaction**: Standard form fill doesn't work - requires direct keyboard input via Playwright
 
 ## Architecture Changes Log
 | Date | Change | Reason |
@@ -43,3 +44,28 @@ None yet.
 | 2025-02-03 | Initial architecture defined | Project kickoff |
 | 2026-02-03 | Added admin results dashboard | View exam results, candidate details, and export CSV |
 | 2026-02-03 | Added exam create/edit pages | Admin can configure exams, select problems, manage access codes |
+| 2026-02-03 | Full system testing complete | All features verified working via browser automation |
+
+## Testing Summary (2026-02-03)
+
+### Features Tested ✅
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Home Page | ✅ Pass | Links to exam entry and admin |
+| Admin Dashboard | ✅ Pass | Shows stats: 4 problems, 2 exams, 5 sessions |
+| Problem Management | ✅ Pass | CRUD, Monaco editor, test cases, difficulty |
+| LeetCode Import | ✅ Pass | Catalog of 2913 problems, search, filter |
+| Exam Management | ✅ Pass | Create/edit, problem selection, access codes |
+| Candidate Entry | ✅ Pass | Access code validation, session creation |
+| Exam Interface | ✅ Pass | Timer, problem sidebar, language selection |
+| Code Editor | ✅ Pass | Monaco with Python/Java/C++/Go |
+| Code Execution | ✅ Pass | Run code shows test results (mock mode) |
+| Results Dashboard | ✅ Pass | Sortable table, exam filter, detail view |
+| Proctor Events | ✅ Pass | Tab switch, copy/paste tracking with timestamps |
+| AI Settings | ✅ Pass | Claude & GPT-4 provider configuration |
+
+### Test Data Created
+- 5 candidate sessions
+- 4 coding problems
+- 2 exams (1 active, 1 inactive)
+- Proctor events recorded
