@@ -1,138 +1,131 @@
-# Academy - Quick Deployment Guide
+# Academy - Super Simple Deployment
 
-## Requirements
-- Linux server (Ubuntu 22.04 recommended)
-- Docker & Docker Compose
-- 4GB+ RAM (8GB for 300 users)
-- 20GB disk space
+## Step 1: Create DigitalOcean Account (2 min)
 
-## Quick Start (5 minutes)
+1. Go to [digitalocean.com](https://www.digitalocean.com)
+2. Sign up (you may get $200 free credit)
+3. Add payment method
 
-### 1. Clone and configure
+## Step 2: Create a Droplet (3 min)
+
+1. Click **"Create"** → **"Droplets"**
+2. Choose:
+   - **Region:** Closest to you
+   - **Image:** Ubuntu 22.04 LTS
+   - **Size:** Basic → Regular → **$24/mo (4GB RAM)** ← good for testing
+   - **Authentication:** Password (easier) or SSH Key
+3. Click **"Create Droplet"**
+4. Wait 1 minute, copy the **IP address**
+
+## Step 3: Connect to Your Server (1 min)
+
+**On Mac/Linux:**
 ```bash
-git clone <your-repo> academy
+ssh root@YOUR_IP_ADDRESS
+```
+
+**On Windows:** Use [PuTTY](https://putty.org) or Windows Terminal:
+```bash
+ssh root@YOUR_IP_ADDRESS
+```
+
+Enter the password you set (or it was emailed to you).
+
+## Step 4: Deploy Academy (5 min)
+
+Run these commands one by one:
+
+```bash
+# Install git
+apt update && apt install -y git
+
+# Clone your repo (replace with your GitHub URL)
+cd /opt
+git clone https://github.com/YOUR_USERNAME/academy.git
 cd academy
 
-# Create .env file
-cp .env.example .env
-
-# Edit .env - set these:
-# DB_PASSWORD=your-secure-password
-# ADMIN_PASSWORD=your-admin-password
+# Run setup
+chmod +x setup-server.sh
+./setup-server.sh
 ```
 
-### 2. Deploy
+**IMPORTANT:** Save the admin password that appears on screen!
+
+## Step 5: Done!
+
+Your app is now running at:
+- **App:** `http://YOUR_IP:3000`
+- **Admin:** `http://YOUR_IP:3000/admin`
+
+---
+
+## Daily Commands
+
 ```bash
+# SSH into your server
+ssh root@YOUR_IP
+
+# Go to app folder
+cd /opt/academy
+
+# View logs
+./deploy.sh logs
+
+# Restart
+./deploy.sh restart
+
+# Stop (saves money when not using)
+./deploy.sh stop
+
+# Start again
 ./deploy.sh start
 ```
 
-### 3. Access
-- App: http://your-server:3000
-- Admin: http://your-server:3000/admin
+## When You're Done Testing
 
-## Commands
+**Delete the droplet to stop billing:**
 
-| Command | Description |
-|---------|-------------|
-| `./deploy.sh start` | Start all services |
-| `./deploy.sh stop` | Stop all services |
-| `./deploy.sh restart` | Restart services |
-| `./deploy.sh rebuild` | Rebuild app after code changes |
-| `./deploy.sh logs` | View app logs |
-| `./deploy.sh logs judge0` | View Judge0 logs |
-| `./deploy.sh status` | Check service status |
+1. Go to DigitalOcean dashboard
+2. Click on your droplet
+3. Click **"Destroy"** → **"Destroy Droplet"**
+4. Billing stops immediately
 
-## Environment Variables
+---
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DB_PASSWORD` | postgres | Database password |
-| `ADMIN_PASSWORD` | admin123 | Admin panel password |
-| `JUDGE0_MOCK_MODE` | false | Set true if Judge0 not working |
+## Cost Summary
 
-## For DigitalOcean
+| Usage | Cost |
+|-------|------|
+| 1 day | ~$0.85 |
+| 1 week | ~$6 |
+| 1 month | $24 |
 
-### Recommended Droplet
-- **Basic:** $48/mo (4GB RAM, 2 vCPU) - up to 100 users
-- **Production:** $96/mo (8GB RAM, 4 vCPU) - 300 users
+You only pay for the time the droplet exists!
 
-### Setup
-```bash
-# SSH to droplet
-ssh root@your-droplet-ip
-
-# Install Docker
-curl -fsSL https://get.docker.com | sh
-
-# Clone and deploy
-git clone <repo> academy && cd academy
-cp .env.example .env
-nano .env  # Set passwords
-./deploy.sh start
-```
-
-### Firewall
-```bash
-ufw allow 22    # SSH
-ufw allow 80    # HTTP
-ufw allow 443   # HTTPS
-ufw allow 3000  # App (or use nginx proxy)
-ufw enable
-```
-
-## Nginx Reverse Proxy (Optional)
-
-For domain + HTTPS:
-
-```nginx
-server {
-    listen 80;
-    server_name exam.yourdomain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Then run `certbot --nginx` for free SSL.
+---
 
 ## Troubleshooting
 
-### App won't start
+### Can't connect via SSH?
+- Wait 2 minutes after creating droplet
+- Check you're using the right IP
+- Make sure password is correct
+
+### App not loading?
 ```bash
-./deploy.sh logs app
+cd /opt/academy
+./deploy.sh logs
 ```
 
-### Database issues
+### Need to restart everything?
 ```bash
-docker compose -f docker-compose.prod.yml exec app npx prisma db push
+cd /opt/academy
+./deploy.sh stop
+./deploy.sh start
 ```
 
-### Judge0 not executing code
-Set `JUDGE0_MOCK_MODE=true` in .env and rebuild:
+### Forgot admin password?
 ```bash
-./deploy.sh rebuild
-```
-
-### Check health
-```bash
-curl http://localhost:3000/api/health
-```
-
-## Backup
-
-### Database
-```bash
-docker compose -f docker-compose.prod.yml exec postgres pg_dump -U postgres academy > backup.sql
-```
-
-### Restore
-```bash
-cat backup.sql | docker compose -f docker-compose.prod.yml exec -T postgres psql -U postgres academy
+cd /opt/academy
+cat .env | grep ADMIN_PASSWORD
 ```
