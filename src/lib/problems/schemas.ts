@@ -33,6 +33,11 @@ export const createProblemSchema = z.object({
     .min(1024, "Minimum 1MB")
     .max(524288, "Maximum 512MB")
     .default(262144),
+  // AI settings
+  aiEnabled: z.coerce.boolean().default(false),
+  aiProviderId: z.string().uuid().nullable().optional(),
+  aiSystemPrompt: z.string().max(2000).nullable().optional(),
+  aiMaxMessages: z.coerce.number().int().min(1).max(100).nullable().optional(),
 });
 
 export const updateProblemSchema = createProblemSchema;
