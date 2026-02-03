@@ -19,7 +19,7 @@ import {
   deleteExam,
   type ActionState,
 } from "@/lib/exams/actions";
-import { Copy, Check, Trash2 } from "lucide-react";
+import { Copy, Check, Trash2, Upload } from "lucide-react";
 
 interface ExamFormProps {
   availableProblems: AvailableProblem[];
@@ -117,6 +117,17 @@ export function ExamForm({ availableProblems, initialData }: ExamFormProps) {
                   <Copy className="h-4 w-4 mr-1" />
                 )}
                 {copied ? "Copied" : "Copy"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                asChild
+              >
+                <Link href={`/admin/exams/${initialData.id}/import`}>
+                  <Upload className="h-4 w-4 mr-1" />
+                  Import Candidates
+                </Link>
               </Button>
             </div>
           </div>

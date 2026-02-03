@@ -26,6 +26,7 @@
 | ACAD-009 | Admin Results Dashboard | 🟢 Done | Results list, session detail, CSV export |
 | ACAD-010 | Problem CRUD | 🟢 Done | Create/edit/delete problems with test cases |
 | ACAD-011 | Exam Create/Edit Pages | 🟢 Done | Exam form with problem selector, access codes |
+| ACAD-012 | Bulk Candidate Import | 🟢 Done | CSV upload, validation, direct access links |
 
 ## Upcoming Milestones
 - [x] Phase 1: Core Infrastructure (Next.js, DB, Judge0)
@@ -46,6 +47,7 @@
 | 2026-02-03 | Added exam create/edit pages | Admin can configure exams, select problems, manage access codes |
 | 2026-02-03 | Full system testing complete | All features verified working via browser automation |
 | 2026-02-03 | Enhanced CSV export | Added time taken, started at columns, BOM for Excel |
+| 2026-02-03 | Bulk candidate import | CSV upload, validation, direct access tokens for candidates |
 
 ## Testing Summary (2026-02-03)
 
@@ -65,6 +67,7 @@
 | CSV Export | ✅ Pass | Export button, Excel-compatible with BOM |
 | Proctor Events | ✅ Pass | Tab switch, copy/paste tracking with timestamps |
 | AI Settings | ✅ Pass | Claude & GPT-4 provider configuration |
+| Bulk Import | ✅ Pass | CSV upload, validation, direct links |
 
 ### Test Data Created
 - 5 candidate sessions

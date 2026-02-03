@@ -118,6 +118,8 @@ model ExamSession {
   examId         String        @map("exam_id")
   candidateName  String        @db.VarChar(255) @map("candidate_name")
   candidateEmail String        @db.VarChar(255) @map("candidate_email")
+  token          String?       @unique @db.VarChar(32)  // Direct access token for bulk import
+  importedAt     DateTime?     @map("imported_at")      // When bulk imported (null if self-registered)
   startedAt      DateTime      @default(now()) @map("started_at")
   submittedAt    DateTime?     @map("submitted_at")
   totalScore     Int?          @map("total_score")
