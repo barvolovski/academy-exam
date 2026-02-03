@@ -20,6 +20,7 @@
 - [x] Start Docker services
 - [x] Push database schema
 - [x] Test the application
+- [x] Add authentication for admin panel
 
 ## Recent Decisions
 | Date | Decision | Rationale |
@@ -29,13 +30,13 @@
 | 2025-02-03 | Use memory-bank pattern | Maintain context across sessions |
 | 2026-02-03 | Enable JUDGE0_MOCK_MODE on macOS | Judge0 requires Linux cgroups unavailable in Docker Desktop |
 | 2026-02-03 | Simple production deployment | Single docker-compose, deploy.sh script, no nginx complexity |
+| 2026-02-03 | Simple password auth for admin | Single admin password with JWT cookies, 24hr expiry |
 
 ## Current Blockers
 None
 
 ## Next Steps
-1. Add authentication for admin panel
-2. Deploy to DigitalOcean production server
+1. Deploy to DigitalOcean production server
 
 ## Dev Scripts (2026-02-03)
 - `./start.sh` - Start dev environment (Docker + Next.js)
@@ -67,3 +68,4 @@ All core features tested and working:
 - LeetCode problem import catalog
 - CSV export for exam results (with BOM for Excel compatibility)
 - Bulk candidate import via CSV with direct access links
+- Admin authentication (login/logout, session cookies)
