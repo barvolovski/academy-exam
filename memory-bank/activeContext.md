@@ -14,6 +14,9 @@
 - [x] Created admin pages (dashboard, problems, exams)
 - [x] Created exam entry page
 - [x] Created API routes (start, run)
+- [x] Created Monaco Editor component
+- [x] Created exam interface components (timer, sidebar, test results)
+- [x] Created main exam page with code editor
 - [ ] Start Docker services
 - [ ] Push database schema
 - [ ] Test the application
@@ -29,10 +32,10 @@
 None
 
 ## Next Steps
-1. Run `pnpm create next-app` to initialize project
-2. Install dependencies (Prisma, Monaco, shadcn)
-3. Set up database schema
-4. Test Docker Compose setup
+1. Install dependencies with `pnpm install`
+2. Start Docker services with `docker compose up -d`
+3. Push database schema with `pnpm db:push`
+4. Test the exam interface flow
 
 ## Session Notes
 - User wants simple, one-time setup

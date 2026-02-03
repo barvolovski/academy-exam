@@ -29,8 +29,9 @@ export default function ExamEntryPage() {
         throw new Error(data.error?.message || "Failed to start exam");
       }
 
-      // Store session token and redirect to exam
+      // Store session data and redirect to exam
       localStorage.setItem("examSessionToken", data.token);
+      localStorage.setItem(`exam_session_${data.sessionId}`, JSON.stringify(data));
       router.push(`/exam/${data.sessionId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
