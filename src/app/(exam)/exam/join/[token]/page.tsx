@@ -9,7 +9,7 @@ export default async function JoinExamPage({ params }: PageProps) {
   const { token } = await params;
 
   // Find session by token
-  const session = await db.examSession.findUnique({
+  const session = await db.examSession.findFirst({
     where: { token },
     include: {
       exam: {
