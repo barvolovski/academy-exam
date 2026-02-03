@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CodeEditor, type SupportedLanguage } from "@/components/editor/code-editor";
+import { useProctoring } from "@/hooks/use-proctoring";
 import {
   ExamTimer,
   ProblemSidebar,
@@ -34,6 +35,9 @@ export default function ExamPage() {
   const params = useParams();
   const router = useRouter();
   const sessionId = params.sessionId as string;
+
+  // Track proctoring events (tab switches, copy/paste, focus lost)
+  useProctoring(sessionId);
 
   const [examData, setExamData] = useState<ExamData | null>(null);
   const [currentProblemId, setCurrentProblemId] = useState<string>("");
