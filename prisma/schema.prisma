@@ -7,6 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// AI Provider configuration
+model AIProvider {
+  id        String   @id @default(uuid())
+  name      String   @unique @db.VarChar(50)  // "claude", "openai"
+  label     String   @db.VarChar(100)         // "Claude (Anthropic)"
+  apiKey    String?  @db.Text                 // encrypted, overrides env var
+  isEnabled Boolean  @default(true) @map("is_enabled")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  problems     Problem[]
+  examProblems ExamProblem[]
+
+  @@map("ai_providers")
+}
+
+// AI Chat messages
+model AIMessage {
+  id        String      @id @default(uuid())
+  sessionId String      @map("session_id")
+  problemId String      @map("problem_id")
+  role      String      @db.VarChar(20)  // "user" | "assistant"
+  content   String      @db.Text
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  session   ExamSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  problem   Problem     @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, problemId])
+  @@map("ai_messages")
+}
+
 // Coding problems with test cases
 model Problem {
   id            String   @id @default(uuid())
@@ -20,8 +52,16 @@ model Problem {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
+  // AI settings (defaults)
+  aiEnabled      Boolean     @default(false) @map("ai_enabled")
+  aiProviderId   String?     @map("ai_provider_id")
+  aiProvider     AIProvider? @relation(fields: [aiProviderId], references: [id])
+  aiSystemPrompt String?     @db.Text @map("ai_system_prompt")
+  aiMaxMessages  Int?        @map("ai_max_messages")
+
   examProblems  ExamProblem[]
   submissions   Submission[]
+  aiMessages    AIMessage[]
 
   @@map("problems")
 }
@@ -61,6 +101,13 @@ model ExamProblem {
   exam      Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
   problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
+  // AI overrides (null = use Problem defaults)
+  aiEnabled      Boolean?    @map("ai_enabled")
+  aiProviderId   String?     @map("ai_provider_id")
+  aiProvider     AIProvider? @relation(fields: [aiProviderId], references: [id])
+  aiSystemPrompt String?     @db.Text @map("ai_system_prompt")
+  aiMaxMessages  Int?        @map("ai_max_messages")
+
   @@unique([examId, problemId])
   @@map("exam_problems")
 }
@@ -81,6 +128,7 @@ model ExamSession {
   exam           Exam          @relation(fields: [examId], references: [id])
   submissions    Submission[]
   proctorEvents  ProctorEvent[]
+  aiMessages     AIMessage[]
 
   @@unique([examId, candidateEmail])
   @@map("exam_sessions")
