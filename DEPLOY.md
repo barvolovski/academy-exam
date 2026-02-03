@@ -39,9 +39,9 @@ Run these commands one by one:
 # Install git
 apt update && apt install -y git
 
-# Clone your repo (replace with your GitHub URL)
+# Clone the repo
 cd /opt
-git clone https://github.com/YOUR_USERNAME/academy.git
+git clone https://github.com/barvolovski/academy-exam.git academy
 cd academy
 
 # Run setup
