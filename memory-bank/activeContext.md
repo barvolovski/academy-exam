@@ -34,10 +34,14 @@
 None
 
 ## Next Steps
-1. Add authentication for admin panel (in progress - parallel task)
-2. Implement CSV export for results (in progress - parallel task)
-3. Add bulk candidate import (in progress - parallel task)
-4. ~~Production deployment configuration~~ DONE
+1. Add authentication for admin panel
+2. Deploy to DigitalOcean production server
+
+## Dev Scripts (2026-02-03)
+- `./start.sh` - Start dev environment (Docker + Next.js)
+- `./stop.sh` - Stop Docker services
+- Fixed db:push hanging with `--accept-data-loss` flag
+- Added `platform: linux/amd64` for Judge0 on Apple Silicon
 
 ## Deployment Configuration (2026-02-03)
 Files created:
