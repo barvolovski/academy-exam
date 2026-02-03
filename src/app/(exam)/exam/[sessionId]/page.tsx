@@ -8,6 +8,7 @@ import {
   ExamTimer,
   ProblemSidebar,
   TestResults,
+  AIChatPanel,
   type Problem,
   type SubmissionStatus,
   type TestResult,
@@ -340,6 +341,9 @@ export default function ExamPage() {
             </>
           )}
         </main>
+
+        {/* AI Chat Panel */}
+        <AIChatPanel sessionId={sessionId} problemId={currentProblemId} />
       </div>
     </div>
   );
