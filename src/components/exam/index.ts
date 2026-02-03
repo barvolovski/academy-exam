@@ -10,3 +10,4 @@ export {
   type TestResultsProps,
   type TestResult,
 } from "./test-results";
+export { AIChatPanel } from "./ai-chat-panel";
