@@ -63,6 +63,7 @@ services:
   # Judge0 Code Execution Engine
   judge0:
     image: judge0/judge0:latest
+    platform: linux/amd64
     container_name: academy-judge0
     restart: unless-stopped
     privileged: true
@@ -83,6 +84,7 @@ services:
   # Judge0 Workers (scale for 300 users)
   judge0-workers:
     image: judge0/judge0:latest
+    platform: linux/amd64
     container_name: academy-judge0-workers
     restart: unless-stopped
     privileged: true
