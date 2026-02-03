@@ -39,6 +39,12 @@ export default function AdminLayout({
           >
             Results
           </Link>
+          <Link
+            href="/admin/settings/ai"
+            className="block px-4 py-2 rounded-md hover:bg-accent"
+          >
+            Settings
+          </Link>
         </nav>
       </aside>
 
