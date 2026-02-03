@@ -20,6 +20,7 @@
 | ACAD-003 | Docker Configuration | 🟢 Done | docker-compose.yml created |
 | ACAD-004 | Judge0 Integration | 🟢 Done | src/lib/judge0.ts |
 | ACAD-005 | Monaco Editor Setup | 🟡 In Progress | Need to add component |
+| ACAD-006 | shadcn/ui Setup | 🟢 Done | Initialized library with core UI components |
 
 ## Upcoming Milestones
 - [ ] Phase 1: Core Infrastructure (Next.js, DB, Judge0)
