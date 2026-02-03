@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 const eventSchema = z.object({
   eventType: z.enum(["tab_switch", "copy", "paste", "focus_lost"]),
@@ -42,21 +43,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Accept events even if session ended (they may have been queued before)
-    // But don't accept for sessions that never started
-    if (session.status === "not_started") {
-      return NextResponse.json(
-        { error: { code: "SESSION_NOT_STARTED", message: "Session has not started" } },
-        { status: 400 }
-      );
-    }
-
     // Insert all events
     await db.proctorEvent.createMany({
       data: events.map((event) => ({
         sessionId,
         eventType: event.eventType,
-        details: event.details ?? null,
+        details: event.details
+          ? (event.details as Prisma.InputJsonValue)
+          : Prisma.JsonNull,
         createdAt: new Date(event.timestamp),
       })),
     });
