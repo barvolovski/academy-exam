@@ -142,7 +142,6 @@ export function ProblemForm({ initialData, aiProviders }: ProblemFormProps) {
           <div className="space-y-2">
             <Label htmlFor="difficulty">Difficulty</Label>
             <Select
-              name="difficulty"
               value={difficulty}
               onValueChange={setDifficulty}
             >
@@ -155,6 +154,7 @@ export function ProblemForm({ initialData, aiProviders }: ProblemFormProps) {
                 <SelectItem value="hard">Hard</SelectItem>
               </SelectContent>
             </Select>
+            <input type="hidden" name="difficulty" value={difficulty} />
             {state?.errors?.difficulty && (
               <p className="text-sm text-destructive">
                 {state.errors.difficulty[0]}
@@ -243,14 +243,18 @@ export function ProblemForm({ initialData, aiProviders }: ProblemFormProps) {
                   height="200px"
                 />
               </div>
-              <input
-                type="hidden"
-                name={`starterCode.${lang.value}`}
-                value={starterCode[lang.value]}
-              />
             </TabsContent>
           ))}
         </Tabs>
+        {/* Hidden inputs outside TabsContent so all languages are always submitted */}
+        {LANGUAGES.map((lang) => (
+          <input
+            key={lang.value}
+            type="hidden"
+            name={`starterCode.${lang.value}`}
+            value={starterCode[lang.value]}
+          />
+        ))}
       </div>
 
       {/* Test Cases */}

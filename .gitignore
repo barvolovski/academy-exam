@@ -52,3 +52,9 @@ prisma/*.db-journal
 # Misc
 *.tsbuildinfo
 .vercel
+
+# Agent tool configs (local)
+.agents/
+.codex/
+.opencode/
+.claude/skills/
