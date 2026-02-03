@@ -31,6 +31,15 @@ function parseFormData(formData: FormData) {
     testCases = [];
   }
 
+  // AI settings
+  const aiEnabled =
+    formData.get("aiEnabled") === "on" ||
+    formData.get("aiEnabled") === "true";
+  const aiProviderId = formData.get("aiProviderId") as string | null;
+  const aiSystemPrompt = formData.get("aiSystemPrompt") as string | null;
+  const aiMaxMessagesRaw = formData.get("aiMaxMessages") as string | null;
+  const aiMaxMessages = aiMaxMessagesRaw ? parseInt(aiMaxMessagesRaw, 10) : null;
+
   return {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
@@ -39,6 +48,10 @@ function parseFormData(formData: FormData) {
     testCases,
     timeLimitMs: formData.get("timeLimitMs"),
     memoryLimitKb: formData.get("memoryLimitKb"),
+    aiEnabled,
+    aiProviderId: aiProviderId || null,
+    aiSystemPrompt: aiSystemPrompt || null,
+    aiMaxMessages: isNaN(aiMaxMessages as number) ? null : aiMaxMessages,
   };
 }
 
@@ -66,6 +79,10 @@ export async function createProblem(
         testCases: result.data.testCases,
         timeLimitMs: result.data.timeLimitMs,
         memoryLimitKb: result.data.memoryLimitKb,
+        aiEnabled: result.data.aiEnabled,
+        aiProviderId: result.data.aiProviderId,
+        aiSystemPrompt: result.data.aiSystemPrompt,
+        aiMaxMessages: result.data.aiMaxMessages,
       },
     });
   } catch (error) {
@@ -105,6 +122,10 @@ export async function updateProblem(
         testCases: result.data.testCases,
         timeLimitMs: result.data.timeLimitMs,
         memoryLimitKb: result.data.memoryLimitKb,
+        aiEnabled: result.data.aiEnabled,
+        aiProviderId: result.data.aiProviderId,
+        aiSystemPrompt: result.data.aiSystemPrompt,
+        aiMaxMessages: result.data.aiMaxMessages,
       },
     });
   } catch (error) {
