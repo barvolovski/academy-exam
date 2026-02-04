@@ -18,6 +18,7 @@ services:
       - JUDGE0_MOCK_MODE=${JUDGE0_MOCK_MODE:-false}
       - NODE_ENV=production
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - SESSION_SECRET=${SESSION_SECRET}
     depends_on:
       postgres:
         condition: service_healthy

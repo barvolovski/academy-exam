@@ -7,6 +7,10 @@ RUN corepack enable && corepack prepare pnpm@9 --activate
 # Dependencies stage
 FROM base AS deps
 WORKDIR /app
+
+# Use public npm registry for production builds
+RUN pnpm config set registry https://registry.npmjs.org/
+
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 

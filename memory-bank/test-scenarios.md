@@ -236,3 +236,46 @@
 - All 3 reported bugs resolved
 - Pass rate improved from 85% to 90% (60/67 tests)
 - 0 bugs remaining, 7 tests still untested (edge cases)
+
+---
+
+### 2026-02-04 End-to-End Exam Testing
+
+**Objective**: Full exam flow testing with multiple users and varying results
+
+**Test Users Created**:
+| User | Email | Session ID | Expected Behavior |
+|------|-------|------------|-------------------|
+| Perfect Score User | perfect@test.com | 8cbd047d-... | Mixed results (some pass/fail) |
+| Partial Score User | partial@test.com | 2a2b637d-... | Partial submissions (2 problems) |
+| All Fail User | fail@test.com | 9b6f5e8f-... | All intentional failures |
+
+**Test Results**:
+
+| User | Score | Problems Submitted | Status |
+|------|-------|-------------------|--------|
+| Perfect Score User | 40/70 (57%) | 7 | ✅ Correct |
+| Partial Score User | 20/60 (33%) | 2 | ✅ Correct |
+| All Fail User | 0/40 (0%) | 4 | ✅ Correct |
+
+**Verified Functionality**:
+1. ✅ Exam entry with access code validation
+2. ✅ Session creation and tracking
+3. ✅ Code submission via API
+4. ✅ Test execution (mock mode)
+5. ✅ Score calculation (per-problem and total)
+6. ✅ Admin results dashboard with filtering
+7. ✅ Session details view (code, test results, timing)
+8. ✅ Proctor events tracking
+9. ✅ Multiple users on same exam
+
+**Admin Panel Verification**:
+- Results list shows all sessions with correct scores
+- Session details show submitted code
+- Test results display pass/fail status
+- Proctor events tab (0 events for API-submitted tests)
+
+**Mock Mode Behavior**:
+- MOCK_OUTPUT directive controls expected output
+- Runtime errors correctly detected (FORCE_RUNTIME_ERROR)
+- Random pass/fail for code without explicit patterns
