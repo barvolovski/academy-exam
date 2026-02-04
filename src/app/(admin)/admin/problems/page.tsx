@@ -2,6 +2,9 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { DeleteProblemButton } from "./_components/delete-problem-button";
 
+// Disable static prerendering - needs fresh data from database
+export const dynamic = "force-dynamic";
+
 export default async function ProblemsPage() {
   const problems = await db.problem.findMany({
     orderBy: { createdAt: "desc" },

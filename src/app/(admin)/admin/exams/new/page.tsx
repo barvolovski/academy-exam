@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 import { ExamForm } from "../_components/exam-form";
 
+// Disable static prerendering - needs fresh problem list from database
+export const dynamic = "force-dynamic";
+
 export default async function NewExamPage() {
   const problems = await db.problem.findMany({
     select: {

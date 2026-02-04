@@ -2,6 +2,9 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 
+// Disable static prerendering - needs fresh data from database
+export const dynamic = "force-dynamic";
+
 export default async function ExamsPage() {
   const exams = await db.exam.findMany({
     orderBy: { createdAt: "desc" },

@@ -1,5 +1,8 @@
 import { db } from "@/lib/db";
 
+// Disable static prerendering - admin pages need runtime database access
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   // Get counts for dashboard
   const [problemCount, examCount, sessionCount] = await Promise.all([
