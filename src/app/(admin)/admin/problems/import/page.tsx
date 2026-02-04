@@ -5,6 +5,9 @@ import { loadLeetCodeProblems } from "@/lib/leetcode/loader";
 import { LeetCodeBrowser } from "./_components/leetcode-browser";
 import { UrlImport } from "./_components/url-import";
 
+// Disable static prerendering - LeetCode catalog is too large
+export const dynamic = "force-dynamic";
+
 export default async function ImportPage() {
   const problems = await loadLeetCodeProblems();
 
