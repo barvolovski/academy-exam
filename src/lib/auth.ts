@@ -78,7 +78,10 @@ export async function setSessionCookie(token: string): Promise<void> {
 
 export async function clearSessionCookie(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(COOKIE_NAME);
+  cookieStore.delete({
+    name: COOKIE_NAME,
+    path: "/admin",
+  });
 }
 
 export async function getSessionToken(): Promise<string | undefined> {
