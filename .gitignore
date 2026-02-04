@@ -60,3 +60,4 @@ prisma/*.db-journal
 .opencode/
 .claude/skills/
 .playwright-mcp/
+package-lock.json
