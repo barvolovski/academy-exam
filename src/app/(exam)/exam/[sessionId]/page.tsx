@@ -32,6 +32,13 @@ interface ExamData {
 
 const STORAGE_KEY_PREFIX = "exam_code_";
 
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function isValidUUID(str: string): boolean {
+  return UUID_REGEX.test(str);
+}
+
 export default function ExamPage() {
   const params = useParams();
   const router = useRouter();
@@ -51,33 +58,67 @@ export default function ExamPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load exam data from localStorage (set by exam entry page)
+  // Load exam data from localStorage or fetch from server
   useEffect(() => {
-    const storedData = localStorage.getItem(`exam_session_${sessionId}`);
-    if (storedData) {
-      try {
-        const data = JSON.parse(storedData) as ExamData;
-        setExamData(data);
-        if (data.problems.length > 0) {
-          setCurrentProblemId(data.problems[0].id);
-          // Initialize code for each problem from starter code
-          const initialCode: Record<string, string> = {};
-          data.problems.forEach((problem) => {
-            const savedCode = localStorage.getItem(
-              `${STORAGE_KEY_PREFIX}${sessionId}_${problem.id}`
-            );
-            initialCode[problem.id] =
-              savedCode || problem.starterCode?.[language] || "";
-          });
-          setCodeByProblem(initialCode);
-        }
-      } catch {
-        setError("Failed to load exam data");
+    async function loadExamData() {
+      // Validate sessionId is a valid UUID
+      if (!isValidUUID(sessionId)) {
+        setError("Invalid exam session. Please start the exam again.");
+        setLoading(false);
+        return;
       }
-    } else {
-      setError("Exam session not found. Please start the exam again.");
+
+      // First try localStorage (for fast loading)
+      const storedData = localStorage.getItem(`exam_session_${sessionId}`);
+      if (storedData) {
+        try {
+          const data = JSON.parse(storedData) as ExamData;
+          initializeExamData(data);
+          return;
+        } catch {
+          // Invalid localStorage data, try fetching from server
+        }
+      }
+
+      // If not in localStorage, fetch from server
+      try {
+        const response = await fetch(`/api/exam/session?sessionId=${sessionId}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(data.error?.message || "Failed to load exam session");
+          setLoading(false);
+          return;
+        }
+
+        // Store in localStorage for future use
+        localStorage.setItem(`exam_session_${sessionId}`, JSON.stringify(data));
+        initializeExamData(data);
+      } catch {
+        setError("Failed to connect to server. Please try again.");
+        setLoading(false);
+      }
     }
-    setLoading(false);
+
+    function initializeExamData(data: ExamData) {
+      setExamData(data);
+      if (data.problems.length > 0) {
+        setCurrentProblemId(data.problems[0].id);
+        // Initialize code for each problem from starter code
+        const initialCode: Record<string, string> = {};
+        data.problems.forEach((problem) => {
+          const savedCode = localStorage.getItem(
+            `${STORAGE_KEY_PREFIX}${sessionId}_${problem.id}`
+          );
+          initialCode[problem.id] =
+            savedCode || problem.starterCode?.[language] || "";
+        });
+        setCodeByProblem(initialCode);
+      }
+      setLoading(false);
+    }
+
+    loadExamData();
   }, [sessionId, language]);
 
   // Save code to localStorage whenever it changes
